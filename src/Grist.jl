@@ -4,9 +4,10 @@ module Grist
 
 using Timestamps, FinancialAssets
 
-import Base: show
+import Base: convert, show, getindex, start, next, done, isempty
 
-export Blotter, AssetTransaction
+export AssetTransaction,
+       Blotter
 
 include("transaction.jl")
 include("blotter.jl")

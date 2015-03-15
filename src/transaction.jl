@@ -4,24 +4,31 @@ immutable AssetTransaction
     asset::FinancialAsset
 end
 
+# this show method is a bit complex, but the goal is to control how an array of 
+# AssetTransaction objects will show once aggregated into an Array
+
 function show(io::IO, at::AssetTransaction)
     # window size for column alignment
 
     # quantity max out at 1_000_000, ergo = 9 (7 + 2 for min spacing)
     q_len = 9
-    # shares || contracts, ergo = 11 (9 + 2)
-    u_len = 11
-    # price max out at  9999.99, ergo = 9 (7 + 2)
-    p_len = 9
+    # ShortFuture, ergo = 13 (11 + 2)
+    u_len = 13
+    # price max out at  9999.99, ergo = 7
+    # this is also a prepend, so the suffix is fixed at 2
+    p_len = 7
     # currency max out at AU$ = 5 (3 + 2)
     c_len = 5
 
     # unit variable
-    if typeof(at.asset) == Stock || typeof(at.asset) == LongStock || typeof(at.asset) == ShortStock 
-        unit = "shares"
-    else
-        unit = "contracts"
-    end
+    # if typeof(at.asset) == Stock || typeof(at.asset) == LongStock || typeof(at.asset) == ShortStock 
+    #     unit = "shares"
+    # else
+    #     unit = "contracts"
+    # end
+    
+    # unit variable
+    unit = split(string(typeof(at.asset)), ".")[2]  # asset type as a string
 
     # currency variable
     if at.asset.currency == USD
@@ -43,13 +50,13 @@ function show(io::IO, at::AssetTransaction)
     if at.quantity >= 0 
         print_with_color(:green, io, " " * string(at.quantity) * ^(" ", q_len - strwidth(string(at.quantity)))) 
         print_with_color(:blue, io, unit * ^(" ", u_len - strwidth(unit)))
-        print_with_color(:blue, io, string(at.price) * ^(" ", p_len - strwidth(string(at.price))))
+        print_with_color(:blue, io, ^(" ", p_len - strwidth(string(at.price)))  * string(at.price) * "  ") # rpad fixed at two spaces
         print_with_color(:blue, io, cvar * ^(" ", c_len - strwidth(cvar)))
         print_with_color(:blue, io, string(at.asset.ticker))
     else at.quantity < 0 
         print_with_color(:red, io, string(at.quantity) * ^(" ", q_len - strwidth(string(at.quantity)) + 1))  # the +1 for negative value padding
         print_with_color(:blue, io, unit * ^(" ", u_len - strwidth(unit)))
-        print_with_color(:blue, io, string(at.price) * ^(" ", p_len - strwidth(string(at.price))))
+        print_with_color(:blue, io, ^(" ", p_len - strwidth(string(at.price)))  * string(at.price) * "  ") # rpad fixed at two spaces
         print_with_color(:blue, io, cvar * ^(" ", c_len - strwidth(cvar)))
         print_with_color(:blue, io, string(at.asset.ticker))
     end
