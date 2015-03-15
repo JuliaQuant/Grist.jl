@@ -5,7 +5,17 @@ immutable AssetTransaction
 end
 
 function show(io::IO, at::AssetTransaction)
-    
+    # window size for column alignment
+
+    # quantity max out at 1_000_000, ergo = 9 (7 + 2 for min spacing)
+    q_len = 9
+    # shares || contracts, ergo = 11 (9 + 2)
+    u_len = 11
+    # price max out at  9999.99, ergo = 9 (7 + 2)
+    p_len = 9
+    # currency max out at AU$ = 5 (3 + 2)
+    c_len = 5
+
     # unit variable
     if typeof(at.asset) == Stock || typeof(at.asset) == LongStock || typeof(at.asset) == ShortStock 
         unit = "shares"
@@ -30,53 +40,17 @@ function show(io::IO, at::AssetTransaction)
         cvar = "" 
     end
 
-    if at.quantity >= 0 && unit == "shares"
-        print_with_color(:green, io, " " * string(at.quantity) * "  ")
-        print_with_color(:blue, io, unit * ^(" ", 5))
-        at.price > 1000 ?
-            print_with_color(:blue, io, string(at.price) * ^(" ", 2)) :
-        at.price > 100 ?
-            print_with_color(:blue, io, ^(" ", 1) * string(at.price) * ^(" ", 2)) :
-        at.price > 10 ?
-            print_with_color(:blue, io, ^(" ", 2) * string(at.price) * ^(" ", 2)) :
-            print_with_color(:blue, io, ^(" ", 3) * string(at.price) * ^(" ", 2))
-        print_with_color(:blue, io, cvar * "  ")
-        print_with_color(:blue, io, string(at.asset.ticker) * "  ")
-    elseif at.quantity >= 0 && unit == "contracts"
-        print_with_color(:green, io, " " * string(at.quantity) * "  ")
-        print_with_color(:blue, io, unit * ^(" ", 2))
-        at.price > 1000 ?
-            print_with_color(:blue, io, string(at.price) * ^(" ", 2)) :
-        at.price > 100 ?
-            print_with_color(:blue, io, ^(" ", 1) * string(at.price) * ^(" ", 2)) :
-        at.price > 10 ?
-            print_with_color(:blue, io, ^(" ", 2) * string(at.price) * ^(" ", 2)) :
-            print_with_color(:blue, io, ^(" ", 3) * string(at.price) * ^(" ", 2))
-        print_with_color(:blue, io, cvar * "  ")
-        print_with_color(:blue, io, string(at.asset.ticker) * "  ")
-    elseif unit == "shares"
-        print_with_color(:red, io, string(at.quantity) * "  ")
-        print_with_color(:blue, io, unit * ^(" ", 5))
-        at.price > 1000 ?
-            print_with_color(:blue, io, string(at.price) * ^(" ", 2)) :
-        at.price > 100 ?
-            print_with_color(:blue, io, ^(" ", 1) * string(at.price) * ^(" ", 2)) :
-        at.price > 10 ?
-            print_with_color(:blue, io, ^(" ", 2) * string(at.price) * ^(" ", 2)) :
-            print_with_color(:blue, io, ^(" ", 3) * string(at.price) * ^(" ", 2))
-        print_with_color(:blue, io, cvar * "  ")
-        print_with_color(:blue, io, string(at.asset.ticker) * "  ")
-    else # only contracts left here
-        print_with_color(:red, io, string(at.quantity) * "  ")
-        print_with_color(:blue, io, unit * ^(" ", 2))
-        at.price > 1000 ?
-            print_with_color(:blue, io, string(at.price) * ^(" ", 2)) :
-        at.price > 100 ?
-            print_with_color(:blue, io, ^(" ", 1) * string(at.price) * ^(" ", 2)) :
-        at.price > 10 ?
-            print_with_color(:blue, io, ^(" ", 2) * string(at.price) * ^(" ", 2)) :
-            print_with_color(:blue, io, ^(" ", 3) * string(at.price) * ^(" ", 2))
-        print_with_color(:blue, io, cvar * "  ")
-        print_with_color(:blue, io, string(at.asset.ticker) * "  ")
+    if at.quantity >= 0 
+        print_with_color(:green, io, " " * string(at.quantity) * ^(" ", q_len - strwidth(string(at.quantity)))) 
+        print_with_color(:blue, io, unit * ^(" ", u_len - strwidth(unit)))
+        print_with_color(:blue, io, string(at.price) * ^(" ", p_len - strwidth(string(at.price))))
+        print_with_color(:blue, io, cvar * ^(" ", c_len - strwidth(cvar)))
+        print_with_color(:blue, io, string(at.asset.ticker))
+    else at.quantity < 0 
+        print_with_color(:red, io, string(at.quantity) * ^(" ", q_len - strwidth(string(at.quantity)) + 1))  # the +1 for negative value padding
+        print_with_color(:blue, io, unit * ^(" ", u_len - strwidth(unit)))
+        print_with_color(:blue, io, string(at.price) * ^(" ", p_len - strwidth(string(at.price))))
+        print_with_color(:blue, io, cvar * ^(" ", c_len - strwidth(cvar)))
+        print_with_color(:blue, io, string(at.asset.ticker))
     end
 end
