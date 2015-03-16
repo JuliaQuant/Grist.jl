@@ -4,10 +4,8 @@ immutable AssetTransaction
     asset::FinancialAsset
 end
 
-# this show method is a bit complex, but the goal is to control how an array of 
-# AssetTransaction objects will show once aggregated into an Array
-
 function show(io::IO, at::AssetTransaction)
+
     # window size for column alignment
 
     # quantity max out at 1_000_000, ergo = 9 (7 + 2 for min spacing)
@@ -19,13 +17,6 @@ function show(io::IO, at::AssetTransaction)
     p_len = 7
     # currency max out at AU$ = 5 (3 + 2)
     c_len = 5
-
-    # unit variable
-    # if typeof(at.asset) == Stock || typeof(at.asset) == LongStock || typeof(at.asset) == ShortStock 
-    #     unit = "shares"
-    # else
-    #     unit = "contracts"
-    # end
     
     # unit variable
     unit = split(string(typeof(at.asset)), ".")[2]  # asset type as a string

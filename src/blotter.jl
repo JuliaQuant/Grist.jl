@@ -1,5 +1,4 @@
-typealias Blotter{T<:AssetTransaction} Timestamp{T}
-
+typealias Blotter Timestamp{AssetTransaction}
 
 function show(io::IO, b::Blotter)
     print_with_color(:blue, io, string(b.timestamp))
@@ -8,13 +7,42 @@ function show(io::IO, b::Blotter)
 end
 
 # ticker
-function getindex{T<:Blotter}(b::Array{T}, t::Symbol)
+function getindex{T<:Blotter}(b::Vector{T}, t::Symbol)
     bval = [blot.value.asset.ticker == t for blot in b]
     b[bval]
 end
 
 # currency
-function getindex{T<:Blotter}(b::Array{T}, c::Currency)
+function getindex{T<:Blotter}(b::Vector{T}, c::Currency)
     bval = [blot.value.asset.currency == c for blot in b]
     b[bval]
+end
+
+# date
+function Base.getindex{T<:Blotter}(b::Vector{T}, d::Union(Date, DateTime))
+    ds = falses(length(b))
+    for i in 1:length(b)
+        if b[i].timestamp == d
+            ds[i] = true
+        end
+    end
+    b[ds]
+end
+
+# vector of dates
+function getindex{T<:Blotter}(b::Vector{T}, ds::Union(Vector{Date}, Vector{DateTime}))
+    counter = falses(length(b))
+    for i in 1:length(b)
+        if b[i].timestamp in ds 
+            counter[i] = true
+        else
+            nothing
+        end
+    end
+    b[counter]
+end
+
+# range of dates -> converts to vector and calls above method
+function getindex{T<:Blotter}(b::Vector{T}, r::Union(StepRange{Date}, StepRange{DateTime})) 
+    b[[r;]]
 end
