@@ -2,6 +2,20 @@ immutable AssetTransaction
     quantity::Int
     price::Float64
     asset::FinancialAsset
+
+    # assign quantity to financial asset object
+    # this is important because the object carries this info in its fields
+    # downstream the financial asset can be extracted for settlement
+
+    #function AssetTransaction(quantity::{Int}, price::{Float64}, asset::{FinancialAsset})
+    function AssetTransaction(quantity, price, asset)
+        if typeof(asset) == Stock || typeof(asset) == LongStock || typeof(asset) == ShortStock
+            asset.shares = quantity 
+        else
+            asset.contracts = quantity
+        end
+        new(quantity, price, asset) 
+    end
 end
 
 function show(io::IO, at::AssetTransaction)
@@ -52,3 +66,23 @@ function show(io::IO, at::AssetTransaction)
         print_with_color(:blue, io, string(at.asset.ticker))
     end
 end
+
+### this is wrong, you don't add transactions
+### function +(a1::AssetTransaction, a2::AssetTransaction)
+###     typ = typeof(a1.asset)
+### 
+###     if a1.asset.ticker != a2.asset.ticker # check ticker
+###         error("underlying assets must match.")
+###     elseif typeof(a1.asset) != typeof(a2.asset) # check similar financial asset types
+###         error("only like asset types supported")
+###     else
+###         PnL()
+###     opened::Union(Date, DateTime)
+###     closed::Union(Date, DateTime)
+###     quantity::Int
+###     commission::Float64
+###     pnl::Float64
+###     asset::FinancialAsset
+###     end
+### end
+        
