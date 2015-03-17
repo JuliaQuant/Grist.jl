@@ -7,8 +7,7 @@ immutable AssetTransaction
     # this is important because the object carries this info in its fields
     # downstream the financial asset can be extracted for settlement
 
-    #function AssetTransaction(quantity::{Int}, price::{Float64}, asset::{FinancialAsset})
-    function AssetTransaction(quantity, price, asset)
+    function AssetTransaction(quantity::Int, price::Float64, asset::FinancialAsset)
         if typeof(asset) == Stock || typeof(asset) == LongStock || typeof(asset) == ShortStock
             asset.shares = quantity 
         else
