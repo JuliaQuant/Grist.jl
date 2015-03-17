@@ -12,6 +12,25 @@ function getindex{T<:Blotter}(b::Vector{T}, t::Symbol)
     b[bval]
 end
 
+# asset type single value
+function getindex{T<:Blotter}(b::Vector{T}, a::DataType)
+    tval = [typeof(blot.value.asset) == a for blot in b]
+    b[tval]
+end
+
+# array of asset types
+function getindex{T<:Blotter}(b::Vector{T}, as::Vector{DataType})
+    counter = falses(length(b))
+    for i in 1:length(b)
+        if typeof(b[i].value.asset) in as 
+            counter[i] = true
+        else
+            nothing
+        end
+    end
+    b[counter]
+end
+
 # currency
 function getindex{T<:Blotter}(b::Vector{T}, c::Currency)
     bval = [blot.value.asset.currency == c for blot in b]

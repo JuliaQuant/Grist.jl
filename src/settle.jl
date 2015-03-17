@@ -5,16 +5,20 @@ function settle{T<:Blotter}(b::Vector{T}, ticker::Symbol)
     # aggregate on asset class and sort
     
     # stocks (Stock, LongStock, ShortStock) 
-    #stck
+    vs   = [Stock, LongStock, ShortStock]
+    stck = b[vs]
 
     # call options (LongCall, ShortCall), 
-    #cll
+    vc  = [LongCall, ShortCall]
+    cll = b[vc]
 
     # put options (LongPut, ShortPut)  
-    #pt
+    vp = [LongPut, ShortPut]
+    pt = b[vp]
 
     # futures (LongFuture, ShortFuture)
-    #ft
+    vf = [LongFuture, ShortFuture]
+    ft = b[vf]
     
     # return settled blotter and un-settled blotter
     ### sb  = PnL(opened, closed, quantity, commission, pnl, financial asset)
