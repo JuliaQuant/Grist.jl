@@ -1,23 +1,10 @@
-immutable AssetTransaction
-    quantity::Int
-    price::Float64
-    asset::FinancialAsset
+#typealias AssetTransaction Timestamp{FinancialAsset}
+#typealias AssetTransaction{T<:FinancialAsset} Timestamp{T}
+typealias Blotter{T<:FinancialAsset} Timestamp{T}
+#typealias Blotter Timestamp{FinancialAsset} # this fubars the show, now sure why
 
-    # assign quantity to financial asset object
-    # this is important because the object carries this info in its fields
-    # downstream the financial asset can be extracted for settlement
-
-    function AssetTransaction(quantity::Int, price::Float64, asset::FinancialAsset)
-        if typeof(asset) == Stock || typeof(asset) == LongStock || typeof(asset) == ShortStock
-            asset.shares = quantity 
-        else
-            asset.contracts = quantity
-        end
-        new(quantity, price, asset) 
-    end
-end
-
-function show(io::IO, at::AssetTransaction)
+#function show(io::IO, at::AssetTransaction)
+function show(io::IO, b::Blotter)
 
     # window size for column alignment
 
@@ -32,56 +19,116 @@ function show(io::IO, at::AssetTransaction)
     c_len = 5
     
     # unit variable
-    unit = split(string(typeof(at.asset)), ".")[2]  # asset type as a string
+#    unit = split(string(typeof(b.asset)), ".")[2]  # asset type as a string
+    unit = split(string(typeof(b.value)), ".")[2]  # asset type as a string
 
     # currency variable
-    if at.asset.currency == USD
+#    if b.asset.currency == USD
+    if b.value.currency == USD
         cvar = "\$"
-    elseif at.asset.currency == EUR
+    #elseif b.asset.currency == EUR
+    elseif b.value.currency == EUR
         cvar = "€"
-    elseif at.asset.currency == GBP
+    #elseif b.asset.currency == GBP
+    elseif b.value.currency == GBP
         cvar = "£"
-    elseif at.asset.currency == JPY
+    #elseif b.asset.currency == JPY
+    elseif b.value.currency == JPY
         cvar = "¥"
-    elseif at.asset.currency == AUD
+    #elseif b.asset.currency == AUD
+    elseif b.value.currency == AUD
         cvar = "AU\$"
-    elseif at.asset.currency == NZD
+    #elseif b.asset.currency == NZD
+    elseif b.value.currency == NZD
         cvar = "NZ\$"
     else
         cvar = "" 
     end
 
-    if at.quantity >= 0 
-        print_with_color(:green, io, " " * string(at.quantity) * ^(" ", q_len - strwidth(string(at.quantity)))) 
+    if typeof(b.value) == Stock || typeof(b.value) == LongStock || typeof(b.value) == ShortStock && b.value.shares >= 0 
+        print_with_color(:green, io, " " * string(b.value.shares) * ^(" ", q_len - strwidth(string(b.value.shares))))
         print_with_color(:blue, io, unit * ^(" ", u_len - strwidth(unit)))
-        print_with_color(:blue, io, ^(" ", p_len - strwidth(string(at.price)))  * string(at.price) * "  ") # rpad fixed at two spaces
+        print_with_color(:blue, io, ^(" ", p_len - strwidth(string(b.value.basis)))  * string(b.value.basis) * "  ") # rpad fixed b two spaces
         print_with_color(:blue, io, cvar * ^(" ", c_len - strwidth(cvar)))
-        print_with_color(:blue, io, string(at.asset.ticker))
-    else at.quantity < 0 
-        print_with_color(:red, io, string(at.quantity) * ^(" ", q_len - strwidth(string(at.quantity)) + 1))  # the +1 for negative value padding
+        print_with_color(:blue, io, string(b.value.ticker))
+    elseif b.value.contracts >= 0 
+        print_with_color(:green, io, " " * string(b.value.contracts) * ^(" ", q_len - strwidth(string(b.value.contracts)))) 
         print_with_color(:blue, io, unit * ^(" ", u_len - strwidth(unit)))
-        print_with_color(:blue, io, ^(" ", p_len - strwidth(string(at.price)))  * string(at.price) * "  ") # rpad fixed at two spaces
+        print_with_color(:blue, io, ^(" ", p_len - strwidth(string(b.value.basis)))  * string(b.value.basis) * "  ") # rpad fixed b two spaces
         print_with_color(:blue, io, cvar * ^(" ", c_len - strwidth(cvar)))
-        print_with_color(:blue, io, string(at.asset.ticker))
+        print_with_color(:blue, io, string(b.value.ticker))
+    elseif typeof(b.value) == Stock || typeof(b.value) == LongStock || typeof(b.value) == ShortStock && b.value.shares < 0 
+        print_with_color(:green, io, " " * string(b.value.shares) * ^(" ", q_len - strwidth(string(b.value.shares))))
+        print_with_color(:blue, io, unit * ^(" ", u_len - strwidth(unit)))
+        print_with_color(:blue, io, ^(" ", p_len - strwidth(string(b.value.basis)))  * string(b.value.basis) * "  ") # rpad fixed b two spaces
+        print_with_color(:blue, io, cvar * ^(" ", c_len - strwidth(cvar)))
+        print_with_color(:blue, io, string(b.value.ticker))
+    else b.value.contracts < 0 
+        print_with_color(:green, io, " " * string(b.value.contracts) * ^(" ", q_len - strwidth(string(b.value.contracts)))) 
+        print_with_color(:blue, io, unit * ^(" ", u_len - strwidth(unit)))
+        print_with_color(:blue, io, ^(" ", p_len - strwidth(string(b.value.basis)))  * string(b.value.basis) * "  ") # rpad fixed b two spaces
+        print_with_color(:blue, io, cvar * ^(" ", c_len - strwidth(cvar)))
+        print_with_color(:blue, io, string(b.value.ticker))
     end
 end
 
-### this is wrong, you don't add transactions
-### function +(a1::AssetTransaction, a2::AssetTransaction)
-###     typ = typeof(a1.asset)
-### 
-###     if a1.asset.ticker != a2.asset.ticker # check ticker
-###         error("underlying assets must match.")
-###     elseif typeof(a1.asset) != typeof(a2.asset) # check similar financial asset types
-###         error("only like asset types supported")
-###     else
-###         PnL()
-###     opened::Union(Date, DateTime)
-###     closed::Union(Date, DateTime)
-###     quantity::Int
-###     commission::Float64
-###     pnl::Float64
-###     asset::FinancialAsset
-###     end
-### end
-        
+# ticker
+# function getindex{T<:Blotter}(b::Vector{T}, t::Symbol)
+ function getindex{T<:FinancialAsset}(b::Array{Timestamps.Timestamp{T},1}, ::Symbol)
+    bval = [blot.value.asset.ticker == t for blot in b]
+    b[bval]
+end
+
+# asset type single value
+function getindex{T<:Blotter}(b::Vector{T}, a::DataType)
+    tval = [typeof(blot.value.asset) == a for blot in b]
+    b[tval]
+end
+
+# array of asset types
+function getindex{T<:Blotter}(b::Vector{T}, as::Vector{DataType})
+    counter = falses(length(b))
+    for i in 1:length(b)
+        if typeof(b[i].value.asset) in as 
+            counter[i] = true
+        else
+            nothing
+        end
+    end
+    b[counter]
+end
+
+# currency
+function getindex{T<:Blotter}(b::Vector{T}, c::Currency)
+    bval = [blot.value.asset.currency == c for blot in b]
+    b[bval]
+end
+
+# date
+function Base.getindex{T<:Blotter}(b::Vector{T}, d::Union(Date, DateTime))
+    ds = falses(length(b))
+    for i in 1:length(b)
+        if b[i].timestamp == d
+            ds[i] = true
+        end
+    end
+    b[ds]
+end
+
+# vector of dates
+function getindex{T<:Blotter}(b::Vector{T}, ds::Union(Vector{Date}, Vector{DateTime}))
+    counter = falses(length(b))
+    for i in 1:length(b)
+        if b[i].timestamp in ds 
+            counter[i] = true
+        else
+            nothing
+        end
+    end
+    b[counter]
+end
+
+# range of dates -> converts to vector and calls above method
+function getindex{T<:Blotter}(b::Vector{T}, r::Union(StepRange{Date}, StepRange{DateTime})) 
+    b[[r;]]
+end
