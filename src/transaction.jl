@@ -84,4 +84,3 @@ end
 ###     asset::FinancialAsset
 ###     end
 ### end
-        
