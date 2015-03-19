@@ -6,10 +6,8 @@ using Timestamps, FinancialAssets
 
 import Base: convert, show, getindex, start, next, done, isempty
 
-export AssetTransaction,
-       Blotter
+export Blotter
 
-include("transaction.jl")
 include("blotter.jl")
 
 end 
