@@ -1,10 +1,10 @@
-#typealias Blotter Timestamp{AssetTransaction}
-# 
-# function show(io::IO, b::Blotter)
-#     print_with_color(:blue, io, string(b.timestamp))
-#     print_with_color(:blue, io, " | ")
-#     print_with_color(:blue, io, string(b.value))
-# end
+typealias Blotter Timestamp{FinancialAsset}
+ 
+function show(io::IO, b::Blotter)
+    print_with_color(:blue, io, string(b.timestamp))
+    print_with_color(:blue, io, " | ")
+    print_with_color(:blue, io, string(b.value))
+end
 
 # ticker
 function getindex{T<:Blotter}(b::Vector{T}, t::Symbol)
