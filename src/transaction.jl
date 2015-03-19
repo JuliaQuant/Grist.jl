@@ -75,7 +75,8 @@ end
 # ticker
 # function getindex{T<:Blotter}(b::Vector{T}, t::Symbol)
  function getindex{T<:FinancialAsset}(b::Array{Timestamps.Timestamp{T},1}, ::Symbol)
-    bval = [blot.value.asset.ticker == t for blot in b]
+    #bval = [blot.value.asset.ticker == t for blot in b]
+    bval = [blot.value.ticker == t for blot in b]
     b[bval]
 end
 
