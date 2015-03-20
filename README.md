@@ -9,44 +9,53 @@ julia> Pkg.clone("https://github.com/JuliaQuant/Grist.jl.git")
 This is a current API tour (subject to change, of course):
 
 ````julia
-using Grist
+julia> using Grist
 
-a = LongCall(:CAT, 1.11, 115.);
+julia> a = LongCall(:CAT, 1.11, 115.);
 
-b = Stock(:BA, 100.11);
+julia> a.quantity = 100
+100
 
-c = Stock(:AAPL, 100.11);
+julia>  b = Stock(:BA, 100.11);
 
-c.currency = EUR;
+julia> b.quantity = 1000
+1000
 
-foo = AssetTransaction(10, 1.12, a);
+julia> c = Stock(:AAPL, 102);
 
-bar = AssetTransaction(-100, 121.53, b);
+julia> c.currency = EUR;
 
-baz = AssetTransaction(10000, 121.54, c);
+julia> c.quantity = -100;
 
-blotterA = [Timestamp(Date(2015,3,15) - Day(15), foo), Timestamp(Date(2015,3,15) - Day(7), bar), Timestamp(Date(2015,3,15), baz)]
-# 3-element Array{Timestamps.Timestamp{Grist.AssetTransaction},1}:
-#  2015-02-28 |  10       LongCall      1.12  $    CAT 
-#  2015-03-08 | -100      Stock       121.53  $    BA  
-#  2015-03-15 |  10000    Stock       121.54  €    AAPL
+julia> d = Date(2015,3,12);
 
-blotterA[:BA]
-# 1-element Array{Timestamps.Timestamp{Grist.AssetTransaction},1}:
-#  2015-03-08 | -100      Stock       121.53  $    BA
+julia> foo = Timestamp(d - Day(15), a);
 
-blotterA[EUR]
-# 1-element Array{Timestamps.Timestamp{Grist.AssetTransaction},1}:
-#  2015-03-15 |  10000    Stock       121.54  €    AAPL
+julia> bar = Timestamp(d - Day(7), b);
 
-blotterA[Stock]
-# 2-element Array{Timestamps.Timestamp{Grist.AssetTransaction},1}:
-#  2015-03-08 | -100      Stock       121.53  $    BA  
-#  2015-03-15 |  10000    Stock       121.54  €    AAPL
+julia> baz = Timestamp(d , c)
+2015-03-12 | -100      Stock         102.0   €    AAPL
+
+julia>  res = [foo, bar, baz]
+3-element Array{Timestamps.Timestamp{T},1}:
+ 2015-02-25 |  100      LongCall        1.11  $    CAT 
+ 2015-03-05 |  1000     Stock         100.11  $    BA  
+ 2015-03-12 | -100      Stock         102.0   €    AAPL
+
+julia> res[:BA]
+1-element Array{Timestamps.Timestamp{T},1}:
+ 2015-03-05 |  1000     Stock         100.11  $    BA
+
+julia>  res[LongCall]
+1-element Array{Timestamps.Timestamp{T},1}:
+ 2015-02-25 |  100      LongCall        1.11  $    CAT
+
+julia> res[EUR]
+1-element Array{Timestamps.Timestamp{T},1}:
+ 2015-03-12 | -100      Stock         102.0   €    AAPL
+
+julia> res[d-Day(14):d]
+2-element Array{Timestamps.Timestamp{T},1}:
+ 2015-03-05 |  1000     Stock         100.11  $    BA  
+ 2015-03-12 | -100      Stock         102.0   €    AAPL
 ````
-
-Travis, Coveralls and PackageEvaluator are stubbed below:
-
-[![Build Status](https://travis-ci.org/JuliaQuant/Grist.jl.png)](https://travis-ci.org/JuliaQuant/Grist.jl)
-[![Coverage Status](https://coveralls.io/repos/JuliaQuant/Grist.jl/badge.png?branch=master)](https://coveralls.io/r/JuliaQuant/Grist.jl?branch=master)
-[![Grist](http://pkg.julialang.org/badges/Grist_release.svg)](http://pkg.julialang.org/?pkg=Grist&ver=release)
