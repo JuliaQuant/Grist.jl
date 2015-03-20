@@ -1,12 +1,7 @@
 # the plan is to NOT define a Blotter as an array but rather as a Timestamp with defined type T <: FinancialInstrument
-
 typealias Blotter{T<:FinancialAsset} Timestamp{T}
 
-#typealias Blotter Timestamp{Union(Stock, LongCall, LongPut)}
-#typealias Blotter{T<:FinancialAsset} Vector{Timestamps.Timestamp{T}} 
-#typealias Blotter Vector{Timestamp{FinancialAsset}} 
-#typealias Blotter{T} Array{Timestamp{T},1} 
-
+# designed to show one blotter at a time, and lined up so an array of these objects look pretty
 function show{T<:FinancialAsset}(io::IO, b::Blotter{T})
 
     # window size for column alignment
@@ -25,6 +20,30 @@ function show{T<:FinancialAsset}(io::IO, b::Blotter{T})
     unit = split(string(typeof(b.value)), ".")[2]  # asset type as a string
 
     # currency variable
+    cvar = show_currency(b)
+
+    if b.value.quantity >= 0 
+        print_with_color(:blue, io, string(b.timestamp))
+        print_with_color(:blue, io, " | ")
+        print_with_color(:green, io, " " * string(b.value.quantity) * ^(" ", q_len - strwidth(string(b.value.quantity))))
+        print_with_color(:blue, io, unit * ^(" ", u_len - strwidth(unit)))
+        print_with_color(:blue, io, ^(" ", p_len - strwidth(string(b.value.basis)))  * string(b.value.basis) * "  ") # rpad fixed b.value two spaces
+        print_with_color(:blue, io, cvar * ^(" ", c_len - strwidth(cvar)))
+        print_with_color(:blue, io, string(b.value.ticker))
+    else
+        print_with_color(:blue, io, string(b.timestamp))
+        print_with_color(:blue, io, " | ")
+        print_with_color(:red, io, string(b.value.quantity) * ^(" ", q_len - strwidth(string(b.value.quantity)) + 1))  # the +1 for negative value padding
+        print_with_color(:blue, io, unit * ^(" ", u_len - strwidth(unit) - 1))  # adj for negative value
+        print_with_color(:blue, io, ^(" ", p_len - strwidth(string(b.value.basis)))  * string(b.value.basis) * "   ") # rpad fixed b.value three spaces
+        print_with_color(:blue, io, cvar * ^(" ", c_len - strwidth(cvar)))
+        print_with_color(:blue, io, string(b.value.ticker))
+    end
+end
+
+# helper method for show
+function show_currency(b::Blotter)
+
     if b.value.currency == USD
         cvar = "\$"
     elseif b.value.currency == EUR
@@ -40,42 +59,8 @@ function show{T<:FinancialAsset}(io::IO, b::Blotter{T})
     else
         cvar = "" 
     end
-
-    if typeof(b.value) == Stock || typeof(b.value) == LongStock || typeof(b.value) == ShortStock && b.value.shares >= 0 
-        print_with_color(:blue, io, string(b.timestamp))
-        print_with_color(:blue, io, " | ")
-        print_with_color(:green, io, " " * string(b.value.shares) * ^(" ", q_len - strwidth(string(b.value.shares))))
-        print_with_color(:blue, io, unit * ^(" ", u_len - strwidth(unit)))
-        print_with_color(:blue, io, ^(" ", p_len - strwidth(string(b.value.basis)))  * string(b.value.basis) * "  ") # rpad fixed b.value two spaces
-        print_with_color(:blue, io, cvar * ^(" ", c_len - strwidth(cvar)))
-        print_with_color(:blue, io, string(b.value.ticker))
-    elseif b.value.contracts >= 0 
-        print_with_color(:blue, io, string(b.timestamp))
-        print_with_color(:blue, io, " | ")
-        print_with_color(:green, io, " " * string(b.value.contracts) * ^(" ", q_len - strwidth(string(b.value.contracts)))) 
-        print_with_color(:blue, io, unit * ^(" ", u_len - strwidth(unit)))
-        print_with_color(:blue, io, ^(" ", p_len - strwidth(string(b.value.basis)))  * string(b.value.basis) * "  ") # rpad fixed b.value two spaces
-        print_with_color(:blue, io, cvar * ^(" ", c_len - strwidth(cvar)))
-        print_with_color(:blue, io, string(b.value.ticker))
-    elseif typeof(b.value) == Stock || typeof(b.value) == LongStock || typeof(b.value) == ShortStock && b.value.shares < 0 
-        print_with_color(:blue, io, string(b.timestamp))
-        print_with_color(:blue, io, " | ")
-        print_with_color(:green, io, " " * string(b.value.shares) * ^(" ", q_len - strwidth(string(b.value.shares))))
-        print_with_color(:blue, io, unit * ^(" ", u_len - strwidth(unit)))
-        print_with_color(:blue, io, ^(" ", p_len - strwidth(string(b.value.basis)))  * string(b.value.basis) * "  ") # rpad fixed b.value two spaces
-        print_with_color(:blue, io, cvar * ^(" ", c_len - strwidth(cvar)))
-        print_with_color(:blue, io, string(b.value.ticker))
-    else b.value.contracts < 0 
-        print_with_color(:blue, io, string(b.timestamp))
-        print_with_color(:blue, io, " | ")
-        print_with_color(:green, io, " " * string(b.value.contracts) * ^(" ", q_len - strwidth(string(b.value.contracts)))) 
-        print_with_color(:blue, io, unit * ^(" ", u_len - strwidth(unit)))
-        print_with_color(:blue, io, ^(" ", p_len - strwidth(string(b.value.basis)))  * string(b.value.basis) * "  ") # rpad fixed b.value two spaces
-        print_with_color(:blue, io, cvar * ^(" ", c_len - strwidth(cvar)))
-        print_with_color(:blue, io, string(b.value.ticker))
-    end
+    cvar
 end
-
 # Not sure why these getindex methods only work on type FinancialAsset, but it works so hey
 
 # ticker
