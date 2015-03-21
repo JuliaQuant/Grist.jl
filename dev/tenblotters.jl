@@ -1,4 +1,4 @@
-using Grist, MarketData
+using MarketData
 
 rng = 1:50:500
 
