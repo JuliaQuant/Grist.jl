@@ -34,8 +34,10 @@ function show{T<:FinancialAsset}(io::IO, b::Blotter{T})
         print_with_color(:blue, io, string(b.timestamp))
         print_with_color(:blue, io, " | ")
         print_with_color(:red, io, string(b.value.quantity) * ^(" ", q_len - strwidth(string(b.value.quantity)) + 1))  # the +1 for negative value padding
-        print_with_color(:blue, io, unit * ^(" ", u_len - strwidth(unit) - 1))  # adj for negative value
-        print_with_color(:blue, io, ^(" ", p_len - strwidth(string(b.value.basis)))  * string(b.value.basis) * "   ") # rpad fixed b.value three spaces
+        #print_with_color(:blue, io, unit * ^(" ", u_len - strwidth(unit) - 1))  # adj for negative value
+        print_with_color(:blue, io, unit * ^(" ", u_len - strwidth(unit) - 0))  # adj for negative value
+        #print_with_color(:blue, io, ^(" ", p_len - strwidth(string(b.value.basis)))  * string(b.value.basis) * "   ") # rpad fixed b.value three spaces
+        print_with_color(:blue, io, ^(" ", p_len - strwidth(string(b.value.basis)))  * string(b.value.basis) * "  ") # rpad fixed b.value two spaces
         print_with_color(:blue, io, cvar * ^(" ", c_len - strwidth(cvar)))
         print_with_color(:blue, io, string(b.value.ticker))
     end
