@@ -1,0 +1,197 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Operators &mdash; gristjl 0.2.2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/julia.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/julia.css" type="text/css" />
+  
+    <link rel="top" title="gristjl 0.2.2 documentation" href="index.html"/>
+        <link rel="next" title="Order book" href="orderbook.html"/>
+        <link rel="prev" title="Asset transactions" href="asset_transactions.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="http://julialang.org/"><img src="_static/julia-logo.svg" class="logo"></a>
+        <!--
+        <a href="index.html" class="fa fa-home"> gristjl</a>
+        -->
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="asset_transactions.html">Asset transactions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Operators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mark-fa-financialasset-price-float64"><tt class="docutils literal"><span class="pre">mark(fa::FinancialAsset,</span> <span class="pre">price::Float64)</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transact-fa-financialasset-qty-int-fill-float64"><tt class="docutils literal"><span class="pre">transact(fa::FinancialAsset,</span> <span class="pre">qty::Int,</span> <span class="pre">fill::Float64)</span></tt></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="orderbook.html">Order book</a></li>
+<li class="toctree-l1"><a class="reference internal" href="blotter.html">Blotter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="portfolio.html">Portfolio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="account.html">Account</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">gristjl</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Operators</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/operators.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="operators">
+<h1>Operators<a class="headerlink" href="#operators" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="mark-fa-financialasset-price-float64">
+<h2><tt class="docutils literal"><span class="pre">mark(fa::FinancialAsset,</span> <span class="pre">price::Float64)</span></tt><a class="headerlink" href="#mark-fa-financialasset-price-float64" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">mark</span></tt> method is designed to mark to market an asset at an arbitrary interval. Typically, this is done at the end of day.</p>
+<p>An example of its usage inside a Reactive architecture. where the arguments are of type <tt class="docutils literal"><span class="pre">Input</span></tt>.</p>
+<div class="highlight-julia"><div class="highlight"><pre><span class="n">apple</span> <span class="o">=</span> <span class="n">lift</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mark</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span> <span class="n">apple_stock</span><span class="p">,</span> <span class="n">closing_price</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="transact-fa-financialasset-qty-int-fill-float64">
+<h2><tt class="docutils literal"><span class="pre">transact(fa::FinancialAsset,</span> <span class="pre">qty::Int,</span> <span class="pre">fill::Float64)</span></tt><a class="headerlink" href="#transact-fa-financialasset-qty-int-fill-float64" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">transact</span></tt> method is designed to update an asset&#8217;s basis and quantity based on a filled trade.</p>
+<p>An example of its usage inside a Reactive architecture, where the arguments are of type <tt class="docutils literal"><span class="pre">Input</span></tt>.</p>
+<div class="highlight-julia"><div class="highlight"><pre><span class="n">apple</span> <span class="o">=</span> <span class="n">lift</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">transact</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">),</span> <span class="n">apple_stock</span><span class="p">,</span> <span class="n">transaction_qty</span><span class="p">,</span> <span class="n">mid_price</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="orderbook.html" class="btn btn-neutral float-right" title="Order book">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="asset_transactions.html" class="btn btn-neutral" title="Asset transactions"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Dan Wlasiuk.
+    </p>
+  </div>
+
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.2.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
