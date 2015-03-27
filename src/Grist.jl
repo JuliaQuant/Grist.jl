@@ -9,10 +9,12 @@ import Base: convert, show, getindex, start, next, done, isempty
 export Blotter,
        mark, transact, 
        ~,
-       res, vals 
+       res, vals, # from dev/tenblotters.jl
+       trans, qty, fill, A, qf # from dev/updates.jl
 
 include("blotter.jl")
 include("operators.jl")
 include("../dev/tenblotters.jl")
+include("../dev/updates.jl")
 
 end 
