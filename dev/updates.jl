@@ -22,7 +22,33 @@ Cash = lift(Cash, trans) do c,t
     Cash.value - (t.quantity * t.basis)
 end
 
-# update process involves pushing trans
+Mark = Input(0.0) # just starting with Closing price
+PValue = Input(0.0) # needs to be an array
+
+Pvalue = lift(Pvalue, A, Mark) do pv, a, m
+    pv = a.quantity * m
+end
+
+Account = Input(0.0)
+
+Account = lift(Account, Pvalue, Cash) do a,p,v
+    a = p + v
+end
+
+using MarketData
+
+for i in 1:length(cl)
+    for j in 1:length(res)
+        if res[j].timestamp == cl[1].timestamp
+            push!(trans, res[j].value)
+            push!(Mark, cl.values[i])
+        else
+            push!(Mark, cl.values[i])
+        end
+    end
+end
+
+# update process involves pushing trans and Mark
 
 # push!(trans, res[2].value) etc.
 
