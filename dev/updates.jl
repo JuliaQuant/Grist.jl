@@ -23,7 +23,7 @@ Cash = lift(Cash, trans) do c,t
 end
 
 Mark = Input(0.0) # just starting with Closing price
-PValue = Input(0.0) # needs to be an array
+Pvalue = Input(0.0) # needs to be an array
 
 Pvalue = lift(Pvalue, A, Mark) do pv, a, m
     pv = a.quantity * m
@@ -39,7 +39,7 @@ using MarketData
 
 for i in 1:length(cl)
     for j in 1:length(res)
-        if res[j].timestamp == cl[1].timestamp
+        if res[j].timestamp == cl.timestamp[i]
             push!(trans, res[j].value)
             push!(Mark, cl.values[i])
         else
