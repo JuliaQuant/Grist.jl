@@ -10,7 +10,7 @@ export Blotter,
        mark, transact, 
        ~,
        res, vals, # from dev/tenblotters.jl
-       trans, qty, fill, A, qf # from dev/updates.jl
+       trans, qty, fill, A, qf, Cash # from dev/updates.jl
 
 include("blotter.jl")
 include("operators.jl")

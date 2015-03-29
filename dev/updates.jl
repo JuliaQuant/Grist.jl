@@ -16,6 +16,16 @@ lift(A,qf) do fa, t
     transact(fa,q,f)
 end
 
+Cash = Input(100000.00)
+
+Cash = lift(Cash, trans) do c,t
+    Cash.value - (t.quantity * t.basis)
+end
+
 # update process involves pushing trans
 
 # push!(trans, res[2].value) etc.
+
+# for r in 1:length(res)
+#     push!(trans, res[r].value)
+# end
