@@ -1,14 +1,13 @@
-using MarketData
-const Evalue = 62140
+using MarketData # to provide mark_price
 
-trans = Input(res[1].value)
+txn = Input(res[1].value)
 
-cash = foldl(100000.00, trans) do init, txn
-    init - txn.quantity * txn.basis
+cash = foldl(100_000.00, txn) do init, t
+    init - t.quantity * t.basis
 end
 
-A = foldl(Stock(:AAPL, 0, 0.0), trans) do asset, txn
-    transact(asset, txn.quantity, txn.basis)
+A = foldl(Stock(:AAPL, 0, 0.0), txn) do asset, t
+    transact(asset, t.quantity, t.basis)
 end
 
 mark_price = Input(cl.values[1])
