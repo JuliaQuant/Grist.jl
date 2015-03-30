@@ -1,11 +1,5 @@
-# ~ and mark are the same method
-function mark(fa::FinancialAsset, mark::Float64)
-    fa.basis =  mark
-end
+# transact helper method
 
-~(fa::FinancialAsset, mark::Float64) = mark(fa::FinancialAsset, mark::Float64) 
-
-# transact
 function transact(fa::FinancialAsset, qty::Int, fill::Float64)
     if fa.quantity + qty == 0
         fa.basis = 0 

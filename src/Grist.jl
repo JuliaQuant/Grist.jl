@@ -7,15 +7,17 @@ using Timestamps, FinancialAssets, Reactive
 import Base: convert, show, getindex, start, next, done, isempty
 
 export Blotter,
-       mark, transact, 
-       ~,
+       transact, # helper method to update asset A
        res, vals, # from dev/tenblotters.jl
-       trans, qty, fill, A, qf, Cash, Mark, Pvalue, Account, Evalue # from dev/updates.jl
+       trans, cash, A, mark_price, Pval, Aval # from dev/updates1.jl
+
+       #trans, qty, fill, A, qf, cash, Cash, Mark, Pvalue, Account, Evalue # from dev/updates.jl
 
 include("blotter.jl")
 include("operators.jl")
 include("../dev/tenblotters.jl")
-include("../dev/updates.jl")
+#include("../dev/updates.jl")
+include("../dev/updates1.jl")
 #include("../dev/run.jl")
 
 end 

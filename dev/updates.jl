@@ -1,20 +1,27 @@
 const Evalue = 62140
 
-zeroed = res[1].value
-zeroed.basis = 0.0
-zeroed.quantity = 0
-trans = Input(zeroed)
+# this was dumb
+# zeroed = res[1].value
+# zeroed.basis = 0.0
+# zeroed.quantity = 0
+# trans = Input(zeroed)
 
-qty  = Input(0)
-fill = Input(0.0)
+trans = Input(res[1].value)
 
-qty  = lift((x,y) -> x.quantity + y, trans, qty)
-fill = lift((x,y) -> x.basis+ y, trans, fill)
+   ### qty  = Input(0)
+   ### fill = Input(0.0)
+   ### 
+   ### qty  = lift((x,y) -> x.quantity + y, trans, qty)
+   ### fill = lift((x,y) -> x.basis+ y, trans, fill)
+   ### 
+   ### A = Input(Stock(:AAPL, 0, 0.0))
+   ### 
+   ### qf = Input((0, 0.00)) # tuple of qty and fill
+   ### qf = lift((x,y) -> (x,y), qty,fill)
 
-A = Input(Stock(:AAPL, 0, 0.0))
+# refactor mess above
 
-qf = Input((0, 0.00)) # tuple of qty and fill
-qf = lift((x,y) -> (x,y), qty,fill)
+qfill = lift(x->(x.quantity, x.basis), trans)
 
 A = lift(A, qf) do fa, t
     q,f = t
